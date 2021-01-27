@@ -11,4 +11,5 @@ jwt.verify(req.token , process.env.JWTsecret  , async (err , result) => {
 })
 }
 
-module.exports = checkLogin;
+
+module.exports = checkLogin ;

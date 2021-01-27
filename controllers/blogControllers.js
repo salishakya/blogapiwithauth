@@ -36,17 +36,17 @@ module.exports.blogs_getSingle = async (req, res ) => {
 //create new blog
 module.exports.blogs_create = async (req, res) => {
     checkLogin(req.token);
+    console.log(req.file);
     const {title , body} = req.body;
+    const blogImage = req.file.path; 
+    console.log(blogImage);
         if (title == null || body == null) {
             res.json ({
                 msg : 'please fill in the blanks'
             })
         } else {
-            //ifelse
-            // const {image} = req.files;
-            // image.mv(path.resolve(__dirname , 'public' , ))
-            const blog = await Blog.create({title , body});
-
+            const blog = await Blog.create({title , body , blogImage});
+            console.log(blog);
         res.json({
             blog , 
             msg: 'Successfully created this new blog'
@@ -61,14 +61,15 @@ checkLogin(req.token);
     console.log(req.params.id);
     const requestedId = req.params.id;
     const {newTitle , newBody } = req.body;
+    const newBlogImage = req.file.path;
     const found = await Blog.findById({_id : requestedId});
     if (found) {
         //edit blog here
         try {
-        await Blog.updateOne({_id : requestedId} , { $set: {title : newTitle, body : newBody } })
+        await Blog.updateOne({_id : requestedId} , { $set: {title : newTitle, body : newBody , blogImage : newBlogImage} })
         res.json({
             msg : 'Your blog has been edited' ,
-            newTitle , newBody
+            newTitle , newBody , newBlogImage
         })} catch(err) {
             console.log(err);
         }

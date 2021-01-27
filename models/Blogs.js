@@ -28,7 +28,9 @@ const blogSchema = new mongoose.Schema({
        type : ObjectID ,
        ref : "User"
     }],
-    image : String
+    blogImage : {
+        type : String
+    }
 })
 
 const Blog = mongoose.model('blog' , blogSchema);
