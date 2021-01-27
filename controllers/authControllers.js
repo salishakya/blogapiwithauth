@@ -149,7 +149,6 @@ module.exports.verification_get = async (req,res,next) => {
   res.json ({
     msg: 'you are verified you can close the window now'
   })
-
 }
 
 module.exports.forgotpw_post = async (req,res) => {

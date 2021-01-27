@@ -14,4 +14,10 @@ blogRouter.post('/editBlog/:id' ,  verifyToken , blogController.blogs_edit);
 
 blogRouter.delete('/deleteBlog/:id' , verifyToken , blogController.blogs_delete);
 
+blogRouter.post('/addComment/:id' ,  verifyToken , blogController.blogAddComment);
+
+blogRouter.put('/likeBlog/:id' ,  verifyToken , blogController.blogLiked);
+
+blogRouter.put('/unlikeBlog/:id' ,  verifyToken , blogController.blogUnliked);
+
 module.exports = blogRouter;

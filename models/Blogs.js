@@ -1,3 +1,4 @@
+const { ObjectID } = require('mongodb');
 const mongoose = require('mongoose');
 
 const blogSchema = new mongoose.Schema({
@@ -17,17 +18,16 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         default: new Date()
     },
-    comments: [
-        {
-            body: String,
-            by: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    isLiked : {
-        type : Boolean , 
-        default : false , 
-        by : mongoose.Schema.Types.ObjectId
-    },
+    comment: 
+      [{ 
+        type: Object, 
+        ref : "Comment"
+        }]
+    ,
+    likes : [{
+       type : ObjectID ,
+       ref : "User"
+    }],
     image : String
 })
 
