@@ -1,5 +1,4 @@
 var mongoose = require("mongoose");
-
 var Schema = mongoose.Schema;
 
 var CommentSchema = new Schema({
@@ -7,7 +6,8 @@ var CommentSchema = new Schema({
     type : String 
   },
   by : {
-    type : mongoose.Schema.Types.ObjectId
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'Blog'
   }
 });
 

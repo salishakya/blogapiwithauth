@@ -19,17 +19,23 @@ const blogSchema = new mongoose.Schema({
         default: new Date()
     },
     comment: 
-      [{ 
-        type: Object, 
-        ref : "Comment"
-        }]
+      { 
+        type: Object , 
+        ref : 'Comment'
+        }
     ,
     likes : [{
        type : ObjectID ,
        ref : "User"
     }],
+    noOfLikes : {
+        type : Number
+    },
+    noOfComment : {
+        type : Number
+    }, 
     blogImage : {
-        type : String
+        type : String 
     }
 })
 
