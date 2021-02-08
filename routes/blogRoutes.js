@@ -68,6 +68,8 @@ blogRouter.get('/Blogs' ,  paginatedResults(Blog) , blogController.blogs_get);
 
 blogRouter.get('/getSingleBlog/:id' , blogController.blogs_getSingle);
 
+blogRouter.post('/Blogs/search' , blogController.blogs_search);
+
 blogRouter.post('/createBlog' , upload.single('blogImage'),  verifyToken , blogController.blogs_create);
 
 blogRouter.put('/editBlog/:id' ,   upload.single('newBlogImage') , verifyToken , blogController.blogs_edit);

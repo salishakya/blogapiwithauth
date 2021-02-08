@@ -2,12 +2,17 @@ const Blog = require('../models/Blogs');
 const checkLogin = require('../middleware/middleware');
 const Comment = require('../models/Comment');
 const jwt = require('jsonwebtoken');
-const paginatedData = require('../routes/blogRoutes')
-//gets all blogs
+
+//gets blogs paginated
 module.exports.blogs_get = async (req , res) => {
     res.json(res.paginatedResults)
 }
 
+//filtering searching 
+module.exports.blogs_search = async ( req, res ) => {
+    const cursor = await Blog.find({$text : {$search : req.body.search}},'title blogImage')
+    res.json(cursor); 
+}
 
 //gets one blog with given title
 module.exports.blogs_getSingle = async (req, res ) => {
