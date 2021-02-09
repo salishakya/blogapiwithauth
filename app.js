@@ -11,6 +11,11 @@ app.use('/public' , express.static('public'));
 const dbURI = 'mongodb://localhost:27017/UserDB';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true , useFindAndModify : false} , () => console.log('connected to db'))
 
+app.get('/' , (req,res) => {
+    res.json({
+        message : 'Hello'
+    })
+})
 
 app.get('/api' , (req,res) => {
     res.json({
