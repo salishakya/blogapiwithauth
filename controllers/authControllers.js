@@ -15,7 +15,8 @@ module.exports.signup_get = async (req,res) => {
 
 module.exports.signup_post =  async (req, res) => {
     const {email , password} = req.body;
-    const user = await User.create({email , password})
+    let verifyCode = Math.random().toString();
+    const user = await User.create({email , password , verifyCode })
     res.json(req.body , user);
 //     const errors = validationResult(req);
 //     if (!errors.isEmpty()) {
