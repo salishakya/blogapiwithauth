@@ -43,7 +43,7 @@ module.exports.signup_post =  async (req, res) => {
       
       const text = `<h1>Click the link below to register</h1>
     
-      http://localhost:3000/api/verification/?verify=${verifyCode}&email=${email}
+      http://blog-auth-api.herokuapp.com/api/verification/?verify=${verifyCode}&email=${email}
 ` 
 
       const mailOptions = {
