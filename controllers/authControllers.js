@@ -16,8 +16,7 @@ module.exports.signup_get = async (req,res) => {
 module.exports.signup_post =  async (req, res) => {
     const {email , password} = req.body;
     const user = await User.create({email , password})
-    console.log(req.body);
-    console.log(user);
+    res.json(req.body , user);
 //     const errors = validationResult(req);
 //     if (!errors.isEmpty()) {
 //         return res.status(400).json({ errors: errors.array() });
