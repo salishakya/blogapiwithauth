@@ -15,78 +15,75 @@ module.exports.signup_get = async (req,res) => {
 
 module.exports.signup_post =  async (req, res) => {
     const {email , password} = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    await User.findOne({email}).exec((err, user) => {
+        if (user) {
+            return res.status(400).json({
+                error : 'Cannot signup, user already exists'
+            })
+        }
+    })
+
+    try {
     let verifyCode = Math.random().toString();
-    const user = await User.create({email , password , verifyCode })
-    res.json(req.body , user);
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//     }
-
-//     await User.findOne({email}).exec((err, user) => {
-//         if (user) {
-//             return res.status(400).json({
-//                 error : 'Cannot signup, user already exists'
-//             })
-//         }
-//     })
-
-//     try {
-//     let verifyCode = Math.random().toString();
-//     const user = await User.create({email , password , verifyCode});
-//      {
-//       var transporter = nodemailer.createTransport({
-//           service : 'gmail' , 
-//         auth: {
-//           user: process.env.email,
-//           pass: process.env.emailpw
-//         }
-//       });
+    const user = await User.create({email , password , verifyCode});
+     {
+      var transporter = nodemailer.createTransport({
+          service : 'gmail' , 
+        auth: {
+          user: process.env.email,
+          pass: process.env.emailpw
+        }
+      });
 
       
-//       const text = `<h1>Click the link below to register</h1>
+      const text = `<h1>Click the link below to register</h1>
     
-//       http://localhost:3000/api/verification/?verify=${verifyCode}&email=${email}
-// ` 
+      http://localhost:3000/api/verification/?verify=${verifyCode}&email=${email}
+` 
 
-//       const mailOptions = {
-//         from: `${process.env.email}`,
-//         to: req.body.email,
-//         subject: 'Registration',
-//         html: text
-//       };
+      const mailOptions = {
+        from: `${process.env.email}`,
+        to: req.body.email,
+        subject: 'Registration',
+        html: text
+      };
 
       
       
-//       transporter.sendMail(mailOptions, function(err, info){
-//             if (err) {
-//                 console.log(err);
-//             } else {
-//         console.log(info);
-//             }
-//         });
-//     }
+      transporter.sendMail(mailOptions, function(err, info){
+            if (err) {
+                console.log(err);
+            } else {
+        console.log(info);
+            }
+        });
+    }
 
     
-//     jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
-//       if (err) {
-//         console.log('cant make token');
-//       }
-//       res.json({token})
-//       console.log({token});
-//     } )
-//   }
-//   catch(err) {
-//     console.log(err);
-//     res.json({
-//       message : 'couldnot create user'
-//     })
-//   }
-//   res.json({
-//     type : 'success' ,
-//     message : 'please check your email  address for link' ,
-//     token
-//   })   
+    jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
+      if (err) {
+        console.log('cant make token');
+      }
+      res.json({token})
+      console.log({token});
+    } )
+  }
+  catch(err) {
+    console.log(err);
+    res.json({
+      message : 'couldnot create user'
+    })
+  }
+  res.json({
+    type : 'success' ,
+    message : 'please check your email  address for link' ,
+    token
+  })   
 }
 
 module.exports.login_get =  (req,res) => {
