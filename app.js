@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use('/public' , express.static('public'));
 
-const dbURI = 'mongodb://localhost:27017/UserDB';
+const dbURI = process.env.mongodbURI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true , useFindAndModify : false} , () => console.log('connected to db'))
 
 app.get('/' , (req,res) => {
