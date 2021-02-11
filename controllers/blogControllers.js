@@ -143,6 +143,7 @@ module.exports.blogDeleteComment = async (res, req) => {
 }
 
 module.exports.blogEditComment = async (req, res) => {
+
     checkLogin(req.token);
     const blog = await Blog.findOne({_id : req.params.id});
     console.log(`${blog.comment[0].comment}`);
@@ -163,6 +164,7 @@ module.exports.blogEditComment = async (req, res) => {
     }
 }
 
+//error : UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'sendStatus' of undefined
 module.exports.blogLiked = async (req, res) => {
     checkLogin(req.token);
     req.data = jwt.verify(req.token , process.env.JWTsecret );
