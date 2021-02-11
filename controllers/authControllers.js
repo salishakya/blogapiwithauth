@@ -80,8 +80,7 @@ module.exports.signup_post =  async (req, res) => {
     })
   }
   res.json({
-    type : 'success' ,
-    message : 'please check your email  address for link' ,
+    message : 'please check your email address for link' ,
     token
   })   
 }
