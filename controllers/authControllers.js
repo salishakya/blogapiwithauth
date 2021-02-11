@@ -68,21 +68,19 @@ module.exports.signup_post =  async (req, res) => {
     jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
       if (err) {
         console.log('cant make token');
-      }
-      res.json({token})
-      console.log({token});
-    } )
+      } else {
+      res.json({token})}
+      } )
   }
   catch(err) {
     console.log(err);
     res.json({
       message : 'couldnot create user'
     })
-  }
+  } 
   res.json({
-    message : 'please check your email address for link' ,
-    token
-  })   
+    msg : 'created user check email'
+  }) 
 }
 
 module.exports.login_get =  (req,res) => {
