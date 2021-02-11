@@ -63,6 +63,15 @@ module.exports.signup_post =  async (req, res) => {
             }
         });
     }
+
+    
+    jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
+      if (err) {
+        console.log('cant make token');
+      } else {
+      res.json({token})
+    }
+    } )
   }
   catch(err) {
     console.log(err);
@@ -70,10 +79,6 @@ module.exports.signup_post =  async (req, res) => {
       message : 'couldnot create user'
     })
   } 
-  res.json({
-    msg : 'created user check email',
-    token
-  }) 
 }
 
 module.exports.login_get =  (req,res) => {
@@ -84,23 +89,18 @@ module.exports.login_get =  (req,res) => {
 
 module.exports.login_post = async (req, res) => {
     const {email , password} = req.body;
+    console.log(req.token);
     console.log(req.body);
 
     const user = await User.login(email , password);
     
     console.log(user);
-    jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
-      if (err) {
-        console.log('cant make token');
-      } else {
-        res.status(201).json({
-          authData ,
-          token,
-          msg : 'logged in successfully'
-      });
-    }
-  }
-)}
+    checkLogin(req.token);
+      res.status(201).json({
+        authData ,
+        msg : 'logged in successfully'
+    });
+} 
 
 
 module.exports.changepw = async (req , res , next) => {
