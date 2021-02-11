@@ -10,7 +10,7 @@ router.post('/signup' , validate , authController.signup_post);
 
 router.get('/login' ,authController.login_get);
 
-router.post('/login' ,validate, verifyToken , authController.login_post);
+router.post('/login' ,validate,  authController.login_post);
 
 router.post('/changepw' , validateChange , verifyToken , authController.changepw); 
 
