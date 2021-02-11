@@ -30,7 +30,10 @@ module.exports.signup_post =  async (req, res) => {
 
     try {
     let verifyCode = Math.random().toString();
-    const user = await User.create({email , password , verifyCode});
+    await User.create({email , password , verifyCode});
+    res.json({
+      msg : 'User created , check email'
+    })
      {
       var transporter = nodemailer.createTransport({
           service : 'gmail' , 
@@ -43,7 +46,7 @@ module.exports.signup_post =  async (req, res) => {
       
       const text = `<h1>Click the link below to register</h1>
     
-      http://blog-auth-api.herokuapp.com/api/verification/?verify=${verifyCode}&email=${email}
+      http://localhost:3000/api/verification/?verify=${verifyCode}&email=${email}
 ` 
 
       const mailOptions = {
@@ -65,13 +68,13 @@ module.exports.signup_post =  async (req, res) => {
     }
 
     
-    jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
-      if (err) {
-        console.log('cant make token');
-      } else {
-      res.json({token})
-    }
-    } )
+    // jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
+    //   if (err) {
+    //     console.log('cant make token');
+    //   } else {
+    //   res.json({token})
+    // }
+    // } )
   }
   catch(err) {
     console.log(err);
@@ -89,17 +92,24 @@ module.exports.login_get =  (req,res) => {
 
 module.exports.login_post = async (req, res) => {
     const {email , password} = req.body;
-    console.log(req.token);
     console.log(req.body);
 
     const user = await User.login(email , password);
     
     console.log(user);
-    checkLogin(req.token);
-      res.status(201).json({
-        authData ,
-        msg : 'logged in successfully'
-    });
+    if ( user.isEmailVerified){
+      jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
+      if (err) {
+        console.log('cant make token');
+      } else {
+      res.json({token})
+    }
+    } )
+  } else {
+      res.json({
+        err : 'verify email first'
+      })
+    }
 } 
 
 
@@ -121,15 +131,13 @@ module.exports.changepw = async (req , res , next) => {
       let det = await User.findOne({email: req.data.user.email} , "password")
       if (!await bcrypt.compare(oldpw , det.password)) {
         res.json ({
-          type : "error" , 
-          msg : "current password is incorrect"
+          err : "current password is incorrect"
         })
       } else {
         res.cookie('jwt', '', {maxAge : 1});
         const salt = await bcrypt.genSalt();
-        await User.updateOne({email : req.data.user.email} , {$set : await bcrypt.hash ( newpw, salt )})
+        await User.updateOne({email : req.data.user.email} , {$set : {password : await bcrypt.hash ( newpw, salt )}})
         res.json ({
-          type : "success" ,
           msg : "successfully updated , please log in now"
         })
       }
