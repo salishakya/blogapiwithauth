@@ -4,18 +4,18 @@ const Comment = require('../models/Comment');
 const jwt = require('jsonwebtoken');
 
 //gets blogs paginated
-module.exports.blogs_get = async (req , res) => {
+exports.blogs_get = async (req , res) => {
     res.json(res.paginatedResults)
 }
 
 //filtering searching 
-module.exports.blogs_search = async ( req, res ) => {
+exports.blogs_search = async ( req, res ) => {
     const cursor = await Blog.find({$text : {$search : req.body.search}},'title blogImage')
     res.json(cursor); 
 }
 
 //gets one blog with given title
-module.exports.blogs_getSingle = async (req, res ) => {
+exports.blogs_getSingle = async (req, res ) => {
     
     const blog = await Blog.findById(req.params.id)
     if ( blog ) {
@@ -31,8 +31,7 @@ module.exports.blogs_getSingle = async (req, res ) => {
 
 
 //create new blog
-module.exports.blogs_create = async (req, res) => {
-    checkLogin(req.token);
+exports.blogs_create = async (req, res) => {
     console.log(req.file);
     const {title , body} = req.body;
     const blogImage = req.file.path; 
@@ -52,9 +51,8 @@ module.exports.blogs_create = async (req, res) => {
 }
 
 //edits existing blog
-module.exports.blogs_edit = async (req ,res ) => {
+exports.blogs_edit = async (req ,res ) => {
     
-checkLogin(req.token);
     console.log(req.params.id);
     const requestedId = req.params.id;
     const {newTitle , newBody } = req.body;
@@ -79,8 +77,7 @@ checkLogin(req.token);
 
 
 //deletes existing blog with title
-module.exports.blogs_delete = async (req,res) => {
-    checkLogin(req.token);
+exports.blogs_delete = async (req,res) => {
     req.data = jwt.verify(req.token , process.env.JWTsecret );
     const blog = await Blog.findOne({_id : req.params.id});
     if (blog) {
@@ -99,8 +96,7 @@ module.exports.blogs_delete = async (req,res) => {
     } 
 } 
 
-module.exports.blogAddComment = async (req,res) => {
-    checkLogin(req.token);
+exports.blogAddComment = async (req,res) => {
     req.data = jwt.verify(req.token , process.env.JWTsecret );
     const blog = Blog.findById(req.params.id);
     if (blog) {
@@ -122,12 +118,11 @@ module.exports.blogAddComment = async (req,res) => {
 }
 
 //doesn't take token
-module.exports.blogDeleteComment = async (res, req) => {
-    checkLogin(req.token);
+exports.blogDeleteComment = async (res, req) => {
     req.data = jwt.verify(req.token , process.env.JWTsecret );
     console.log(req.data);
     const blog = await Blog.findById({_id : req.params.id});
-    const commentid = await Comment.findById({_id : req.query.commentid});
+    const commentid = await Comment.findById({_id : req.params.commentid});
     if (blog) {
     try {
         await Comment.findByIdAndDelete({_id : commentid});
@@ -142,12 +137,11 @@ module.exports.blogDeleteComment = async (res, req) => {
     }
 }
 
-module.exports.blogEditComment = async (req, res) => {
+exports.blogEditComment = async (req, res) => {
 
-    checkLogin(req.token);
     const blog = await Blog.findOne({_id : req.params.id});
     console.log(`${blog.comment[0].comment}`);
-    const comment = await Comment.findOne({_id : req.query.commentid});
+    const comment = await Comment.findOne({_id : req.params.commentid});
     if (blog && comment) {
         try {
        const newComment = await Comment.findOneAndUpdate({_id : req.query.commentid} , {$set : {comment : req.body.comment}} , {new : true})
@@ -165,18 +159,9 @@ module.exports.blogEditComment = async (req, res) => {
 }
 
 //error : UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'sendStatus' of undefined
-module.exports.blogLiked = async (req, res) => {
-    checkLogin(req.token);
+exports.blogLiked = async (req, res) => {
     req.data = jwt.verify(req.token , process.env.JWTsecret );
     const blog = await Blog.findById(req.params.id);
-    // console.log(blog);
-    // for (let d of blog.likes) {
-    //     console.log(d)
-    // }
-
-    // for (const index in blog.likes) {  
-    //     console.log(`${blog.likes[index]} is at position ${index}`)
-    //   }
 
 for (const index in blog.likes) {
     const found = await Blog.findOne({likes : `${blog.likes[index]}`});
@@ -201,8 +186,7 @@ for (const index in blog.likes) {
     }
 } 
 
-module.exports.blogUnliked = async (req, res) => {
-    checkLogin(req.token);
+exports.blogUnliked = async (req, res) => {
     req.data = jwt.verify(req.token , process.env.JWTsecret );
     const blog = Blog.findById(req.params.id);
     for (const index in blog.likes) {
@@ -227,4 +211,5 @@ module.exports.blogUnliked = async (req, res) => {
         }
     } 
 }
+
 

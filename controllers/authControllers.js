@@ -5,15 +5,8 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const Reset = require("../models/Reset");
-const checkLogin = require("../middleware/middleware");
 
-module.exports.signup_get = async (req,res) => {
-    res.json({
-        message : 'you are in signupget'
-    });  
-}
-
-module.exports.signup_post =  async (req, res) => {
+exports.signup_post =  async (req, res) => {
     const {email , password} = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -31,9 +24,6 @@ module.exports.signup_post =  async (req, res) => {
     try {
     let verifyCode = Math.random().toString();
     await User.create({email , password , verifyCode});
-    res.json({
-      msg : 'User created , check email'
-    })
      {
       var transporter = nodemailer.createTransport({
           service : 'gmail' , 
@@ -66,15 +56,9 @@ module.exports.signup_post =  async (req, res) => {
             }
         });
     }
-
-    
-    // jwt.sign({user} ,process.env.JWTsecret , (err, token) => {
-    //   if (err) {
-    //     console.log('cant make token');
-    //   } else {
-    //   res.json({token})
-    // }
-    // } )
+    res.json({
+      msg : 'User created , check email'
+    })
   }
   catch(err) {
     console.log(err);
@@ -84,13 +68,7 @@ module.exports.signup_post =  async (req, res) => {
   } 
 }
 
-module.exports.login_get =  (req,res) => {
-    res.json({
-        message : 'you are in loginget'
-    })
-}
-
-module.exports.login_post = async (req, res) => {
+exports.login_post = async (req, res) => {
     const {email , password} = req.body;
     console.log(req.body);
 
@@ -112,39 +90,38 @@ module.exports.login_post = async (req, res) => {
     }
 } 
 
-
-module.exports.changepw = async (req , res , next) => {
+exports.changepw = async (req , res) => {
     
-    console.log(process.env.JWTsecret); 
-    req.data = jwt.verify(req.token , process.env.JWTsecret );
-    const { oldpw , newpw , rnewpw } = req.body;
-    console.log(req.data.user.email);
-  
-    if (newpw != rnewpw) {
-      res.json({
-        type : "error" , 
-        msg : "Repeat password doesn't match"
-      })
-    }
-  
-    else {
-      let det = await User.findOne({email: req.data.user.email} , "password")
-      if (!await bcrypt.compare(oldpw , det.password)) {
-        res.json ({
-          err : "current password is incorrect"
-        })
-      } else {
-        res.cookie('jwt', '', {maxAge : 1});
-        const salt = await bcrypt.genSalt();
-        await User.updateOne({email : req.data.user.email} , {$set : {password : await bcrypt.hash ( newpw, salt )}})
-        res.json ({
-          msg : "successfully updated , please log in now"
-        })
-      }
-    }
+  console.log(process.env.JWTsecret); 
+  req.data = jwt.verify(req.token , process.env.JWTsecret );
+  const { oldpw , newpw , rnewpw } = req.body;
+  console.log(req.data.user.email);
+
+  if (newpw != rnewpw) {
+    res.json({
+      type : "error" , 
+      msg : "Repeat password doesn't match"
+    })
   }
 
-module.exports.verification_get = async (req,res,next) => {
+  else {
+    let det = await User.findOne({email: req.data.user.email} , "password")
+    if (!await bcrypt.compare(oldpw , det.password)) {
+      res.json ({
+        err : "current password is incorrect"
+      })
+    } else {
+      res.cookie('jwt', '', {maxAge : 1});
+      const salt = await bcrypt.genSalt();
+      await User.updateOne({email : req.data.user.email} , {$set : {password : await bcrypt.hash ( newpw, salt )}})
+      res.json ({
+        msg : "successfully updated , please log in now"
+      })
+    }
+  }
+}
+
+exports.verification_get = async (req,res) => {
 
   console.log(req.query.verify);
   await User.findOneAndUpdate({$and : [{verifyCode : req.query.verify},{email : req.query.email}]} , {$set : {isEmailVerified : true}} )
@@ -153,7 +130,7 @@ module.exports.verification_get = async (req,res,next) => {
   })
 }
 
-module.exports.forgotpw_post = async (req,res) => {
+exports.forgotpw_post = async (req,res) => {
 
   const email = req.body.email;
   const user = await User.findOne({email});
@@ -204,7 +181,7 @@ module.exports.forgotpw_post = async (req,res) => {
     })   
 }
 
-module.exports.forgotpw_post2 = async (req,res,next) => {
+exports.forgotpw_post2 = async (req,res,next) => {
   const email = req.query.email;
   const forgotCode = req.query.forgotCode;
   const password = req.body.password;

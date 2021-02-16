@@ -27,5 +27,5 @@ app.listen( process.env.PORT || 3000 , () => {
     console.log('listening at 3000');
 })
 
-app.use('/api', authRoutes);
-app.use('/api', blogRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/blog', blogRoutes);

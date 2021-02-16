@@ -24,5 +24,8 @@
     "nodemon": "^2.0.7",
     "url": "^0.11.0",
     "validator": "^13.5.2"
+  },
+  "devDependencies": {
+    "prettier": "2.2.1"
   }
 }
